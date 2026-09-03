@@ -1,99 +1,87 @@
-# companion.ai
+# SaaS AI Companion Platform
 
-Welcome to **[companion.ai](https://ai-companion-nu.vercel.app/)** - Your Personal AI Companion Creator and Conversational Partner!
+A full-stack SaaS platform that allows users to create, customize, and converse with highly personalized AI companions. Engineered with Next.js, LangChain, and Llama-2, this application features persistent conversational memory, vector search, and a complete subscription monetization pipeline.
 
 ![App Preview](https://github.com/Akash4510/ai-companion/assets/78362903/427b2425-dde1-45e6-a2b5-fceca9bfa09c)
 
-## About the Project
+## 🏗️ Architecture & Tech Stack
 
-**companion.ai** is a groundbreaking SaaS full-stack application that empowers users to create their very own AI companions and engage in meaningful conversations with them. With a user-friendly interface and cutting-edge AI models, the possibilities are endless.
+This project is built on a modern, decoupled serverless architecture, utilizing the Next.js 13 App Router for seamless client/server boundaries.
 
-## Versatility in Applications
+*   **Framework:** Next.js 13 (App Router), React 18, TypeScript
+*   **AI & LLM Orchestration:** LangChain, Replicate (Llama-2-13b), OpenAI Edge, Vercel AI SDK
+*   **Database & ORM:** MongoDB, Prisma ORM
+*   **Vector Database (Memory):** Pinecone
+*   **Caching & Rate Limiting:** Upstash Redis
+*   **Authentication & Payments:** Clerk, Stripe
+*   **UI & Styling:** Tailwind CSS, Shadcn UI (Radix Primitives), Zustand, Cloudinary
 
-Empower Your AI Companion to Adapt to Your Unique Needs:
+## 🧠 Key Engineering Features
 
-![Versatality in Applications](https://github.com/Akash4510/ai-companion/assets/78362903/bf110cf4-8e8c-421a-bb57-8cb08ea3d90c)
+### 1. Persistent Conversational Memory (Vector Search)
+To overcome standard LLM context window limitations, the application utilizes **Pinecone Vector Database** coupled with **LangChain**. Chat histories are vectorized and stored, allowing the model to semantically retrieve past conversation contexts in real-time. This ensures high-fidelity, context-aware responses over long-term interactions without ballooning token costs.
 
+### 2. Edge-Optimized AI Streaming
+Leveraging the Vercel AI SDK and Edge runtime, the `api/chat` routes stream AI responses back to the client chunk-by-chunk. This drastically reduces Time-to-First-Byte (TTFB) and provides a highly responsive, chat-like UI experience even when model inference takes several seconds.
 
-Unleash the Full Spectrum of Possibilities:
+### 3. Distributed Rate Limiting
+To protect expensive LLM API endpoints from abuse and DDoS, the system implements distributed rate limiting using **Upstash Redis**. Algorithms govern request frequency per user session, ensuring platform stability.
 
-- **Casual Conversations**: Engage in friendly banter, discuss your day, and experience the joy of chatting with your personalized AI companion.
+### 4. Full SaaS Monetization Pipeline
+Integrated **Stripe Webhooks** securely handle subscription lifecycle events. The backend cross-references webhook signatures, syncs subscription statuses with MongoDB via Prisma, and restricts premium AI companion creation to active subscribers.
 
-- **Study Support**: Elevate your learning experience with a dedicated study buddy. Ask questions, seek explanations, and receive expert guidance.
-
-- **Specialized Tasks**: Tailor your AI companion to excel in specific tasks. Whether it's generating creative content, providing technical assistance, or organizing information, your companion has your back.
-
-- **Academic Excellence**: Craft subject-specific AI companions. These models are trained to provide accurate and insightful answers related to specific subjects, bolstering your academic journey.
-
-- **Wellness and Motivation**: Seek inspiration, motivation, and emotional support from your AI companion. Enhance your well-being through positive interactions and affirmations.
-
-## Key Features
-
-- **Create Your AI Companion**: Design your unique AI companion by specifying personality traits, instructions, and seed data. The AI model, 'llama2-13b', ensures captivating and context-aware interactions.
-
-- **Custom Conversations**: Train your AI companion with example conversations, guiding its responses to match your preferences.
-
-- **Vast Applications**: Whether it's for casual chats, study support, or specific tasks, your AI companion is adaptable to your needs.
-
-- **Premium Plan**: Enjoy the Premium Plan to create, edit, and fine-tune your AI companion to perfection.
-
-- **Engage with Others**: Chat with companions created by other users, broadening your conversational horizons.
-
-## Personalization Beyond Limits
-
-Transform Your AI Companion into an Extension of Yourself:
+## 📸 Interface Showcase
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="https://github.com/Akash4510/ai-companion/assets/78362903/928b4de6-e506-494d-aee8-4c9fdc9fe831" alt="general" style="width: 48%;">
-  <img src="https://github.com/Akash4510/ai-companion/assets/78362903/bf110cf4-8e8c-421a-bb57-8cb08ea3d90c" alt="configuration" style="width: 48%;">
+  <img src="https://github.com/Akash4510/ai-companion/assets/78362903/928b4de6-e506-494d-aee8-4c9fdc9fe831" alt="Configuration Panel" style="width: 48%;">
+  <img src="https://github.com/Akash4510/ai-companion/assets/78362903/164fd5bf-11b1-4bcf-9a85-a437ce3e6080" alt="Live Streaming Chat" style="width: 48%;">
 </div>
 
-### Crafting Your AI Companion's Purpose
+*Left: Custom prompt engineering and model configuration dashboard. Right: Real-time, streaming WebRTC-style chat interface.*
 
-1. **Defined Personality**: Choose from a range of personality traits to give your companion a unique character.
-2. **Tailored Instructions**: Provide specific instructions to shape your companion's responses, ensuring they resonate with your preferences.
-3. **Example Conversations**: Fine-tune your companion's dialogue by guiding their interactions through sample conversations.
+## 🚀 Local Development Setup
 
-### Embrace the Power of AI
+To run this project locally, you will need to provision several external services (MongoDB, Pinecone, Clerk, Stripe, Replicate, Upstash).
 
-1. **Create an Account**: Begin your journey at [companion.ai](https://ai-companion-nu.vercel.app/) by signing up for an account.
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/Akash4510/ai-companion.git](https://github.com/Akash4510/ai-companion.git)
+   cd ai-companion
+   ```
 
-2. **Discover AI Companions**: Immerse yourself in meaningful conversations with AI companions created by other users.
+2. **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-3. **Unleash Your Creativity**: Elevate your experience with the Premium Plan, allowing you to create, customize, and nurture your own AI companion.
+3. **Environment Configuration:**
+Create a `.env` file in the root directory and populate it with your specific service keys (refer to `.env.example` if available):
+    ```env
+    DATABASE_URL=
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+    CLERK_SECRET_KEY=
+    REPLICATE_API_TOKEN=
+    PINECONE_API_KEY=
+    PINECONE_ENVIRONMENT=
+    PINECONE_INDEX=
+    UPSTASH_REDIS_REST_URL=
+    UPSTASH_REDIS_REST_TOKEN=
+    STRIPE_API_KEY=
+    STRIPE_WEBHOOK_SECRET=
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+    ```
 
-### Seamless Interaction
+4. **Initialize Database:**
+    ```bash
+    npx prisma generate
+    npx prisma db push
+    node scripts/seed.ts # Seeds initial category data
+    ```
 
-Engage in Effortless Conversations with Your AI Companion:
-Example Conversations
 
-![example-conversation](https://github.com/Akash4510/ai-companion/assets/78362903/164fd5bf-11b1-4bcf-9a85-a437ce3e6080)
+5. **Start the development server:**
+    ```bash
+    npm run dev
+    ```
 
-#### Conversational Mastery
-
-1. **Initiate Dialogue**: Initiate conversations with your AI companion, sparking seamless interactions.
-2. **Contextual Responses**: Delight in responses that reflect the context of your discussions, enhancing the conversational experience.
-
-## Usage
-
-1. **Creating a Companion**:
-
-   - Upload an avatar image for your companion.
-   - Define their personality traits, preferences, and instructions.
-   - Provide example conversations to fine-tune their responses.
-
-2. **Chatting with Companions**:
-   - Initiate conversations with your AI companion.
-   - Receive contextually relevant and engaging responses.
-
-## Premium Plan
-
-Unlock the full potential of **companion.ai** with the Premium Plan:
-
-- Create and customize your own AI companions.
-- Edit and modify companions to match evolving preferences.
-- Enjoy exclusive features for a truly personalized experience.
-
-## Join the AI Conversation Revolution!
-
-Visit [companion.ai](https://ai-companion-nu.vercel.app/) and experience the future of AI companionship today.
+***
