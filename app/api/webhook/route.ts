@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 
 import prismadb from '@/lib/prismadb';
 import { stripe } from '@/lib/stripe';
+import { getSubscriptionPeriodEnd, getInvoiceSubscription } from './stripe-subscription-period';
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0].price.id,
         stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
+          (getSubscriptionPeriodEnd(subscription, (items) => items[0])) * 1000
         ),
       },
     });
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
 
   if (event.type === 'invoice.payment_succeeded') {
     const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
+      (getInvoiceSubscription(session)) as string
     );
 
     await prismadb.userSubscription.update({
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
       data: {
         stripePriceId: subscription.items.data[0].price.id,
         stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
+          (getSubscriptionPeriodEnd(subscription, (items) => items[0])) * 1000
         ),
       },
     });
